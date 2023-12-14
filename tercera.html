@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiencia VR - Manejo del play/pausa con la mirada</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/1.4.2/aframe.min.js"></script>
+    <script>
+        AFRAME.registerComponent('gaze-play', {
+            schema: {
+                target: {type: 'selector'}
+            },
+            init: function () {
+                var videoEl = this.data.target;
+                this.el.addEventListener('mouseenter', () => {
+                    this.timer = setTimeout(() => {
+                        videoEl.play();
+                    }, 2000); // 2 segundos para activar
+                });
+                this.el.addEventListener('mouseleave', () => {
+                    clearTimeout(this.timer);
+                });
+            }
+        });
+
+        AFRAME.registerComponent('gaze-pause', {
+            schema: {
+                target: {type: 'selector'}
+            },
+            init: function () {
+                var videoEl = this.data.target;
+                this.el.addEventListener('mouseenter', () => {
+                    this.timer = setTimeout(() => {
+                        videoEl.pause();
+                    }, 2000); // 2 segundos para activar
+                });
+                this.el.addEventListener('mouseleave', () => {
+                    clearTimeout(this.timer);
+                });
+            }
+        });
+
+        // Componente para controlar la reproducción del video embebido con la mirada
+        AFRAME.registerComponent('gaze-control-video', {
+            init: function () {
+                var videoEl = document.getElementById('my-video');
+                var timerDuration = 2000; // 2 segundos
+                var timer;
+
+                this.el.addEventListener('mouseenter', () => {
+                    timer = setTimeout(() => {
+                        if (videoEl.paused) {
+                            videoEl.play();
+                        } else {
+                            videoEl.pause();
+                        }
+                    }, timerDuration);
+                });
+
+                this.el.addEventListener('mouseleave', () => {
+                    if (timer) {
+                        clearTimeout(timer);
+                    }
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- DOS VIDEOS UNO DE FONDO Y UNO FLOTANTE-->
+    <a-scene>
+        <a-assets>
+            <video id="myvideo" src="un-minuto-bosque.mp4" autoplay loop></video>
+            <video id="my-video" src="ruta_del_video.mp4" autoplay loop></video>
+        </a-assets>
+
+        <a-plane src="#my-video" position="0 3.5 -3" rotation="0 0 0" width="4" height="2.25" gaze-control-video></a-plane>
+
+        <a-camera>
+            <a-cursor color="yellow"></a-cursor>
+        </a-camera>
+
+        <a-videosphere src="#myvideo"></a-videosphere>
+
+        <a-box color="green" width="1" height="0.5" depth="0.1" 
+               position="-1 1 -3" gaze-play="target: #myvideo"></a-box>
+
+        <a-box color="red" width="1" height="0.5" depth="0.1" 
+               position="1 1 -3" gaze-pause="target: #myvideo"></a-box>
+    </a-scene>
+</body>
+</html>

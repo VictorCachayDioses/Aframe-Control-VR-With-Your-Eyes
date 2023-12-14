@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiencia VR - Manejo del play/pausa con la mirada</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/1.4.2/aframe.min.js"></script>
+    <script>
+        AFRAME.registerComponent('gaze-play', {
+            schema: {
+                target: {type: 'selector'}
+            },
+            init: function () {
+                var videoEl = this.data.target;
+                this.el.addEventListener('mouseenter', () => {
+                    this.timer = setTimeout(() => {
+                        videoEl.play();
+                    }, 2000); // 2 segundos para activar
+                });
+                this.el.addEventListener('mouseleave', () => {
+                    clearTimeout(this.timer);
+                });
+            }
+        });
+
+        AFRAME.registerComponent('gaze-pause', {
+            schema: {
+                target: {type: 'selector'}
+            },
+            init: function () {
+                var videoEl = this.data.target;
+                this.el.addEventListener('mouseenter', () => {
+                    this.timer = setTimeout(() => {
+                        videoEl.pause();
+                    }, 2000); // 2 segundos para activar
+                });
+                this.el.addEventListener('mouseleave', () => {
+                    clearTimeout(this.timer);
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <a-scene>
+        <a-assets>
+            <video id="myvideo" src="un-minuto-bosque.mp4"></video>
+        </a-assets>
+         <!-- Imagen -->
+        <a-assets>
+            <img id="my-image" src="camara.png">
+        </a-assets>
+        <a-assets>
+            <!-- Preload del video -->
+            <video id="my-video" src="ruta_del_video.mp4" autoplay loop muted></video>
+        </a-assets>
+        
+          <!-- Para usar el png como un 3D -->
+          <a-plane src="#my-image" material="transparent: true; alphaTest: 0.5" position="0 2 -3" rotation="0 0 0" width="4" height="2">
+          </a-plane>
+          <!-- Usando un plano para mostrar el video -->
+        <a-plane src="#my-video" position="0 3.5 -3" rotation="0 0 0" width="4" height="2.25">
+        </a-plane>
+
+        <a-camera>
+            <a-cursor color="yellow"></a-cursor>
+        </a-camera>
+
+        <a-videosphere src="#myvideo"></a-videosphere>
+
+        <!-- Botones circulares para reproducir y pausar el video // el primer número es el X el segundo el Y y el tercero la profundidad en "position" -->
+        <a-box color="green" width="1" height="0.5" depth="0.1" 
+               position="-1 1 -3" gaze-play="target: #myvideo"></a-box>
+
+        <!-- Botón rojo para pausar el video -->
+        <a-box color="red" width="1" height="0.5" depth="0.1" 
+               position="1 1 -3" gaze-pause="target: #myvideo"></a-box>
+    </a-scene>
+</body>
+</html>
