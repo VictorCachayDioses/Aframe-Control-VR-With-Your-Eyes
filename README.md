@@ -1,4 +1,3 @@
-
 # MySQL-2.php
 
 Este archivo contiene el código fuente de `mysql-2.php`, que es un script en PHP para interactuar con una base de datos MySQL.
